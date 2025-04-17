@@ -6,7 +6,7 @@
 /*   By: gule-bat <gule-bat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 15:17:05 by gule-bat          #+#    #+#             */
-/*   Updated: 2025/04/18 00:41:19 by gule-bat         ###   ########.fr       */
+/*   Updated: 2025/04/18 01:38:05 by gule-bat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 #include "../ftprintf/ft_printf.h"
 #include "vlc.h"
 
-#define HEIGHT 1000
-#define WIDTH 1000
+#define HEIGHT 1900
+#define WIDTH 1500
 
 t_tab	*copyimg(void	*srcimg, t_tab *tab, void	*mxptr)
 {
@@ -59,18 +59,7 @@ t_tab	*img_loader(char *path, void *mlx_ptr)
 	return (tab);
 }
 
-double	map(char pos, int nb)
-{
-	if (pos == 'x')
-		return (((long double)2 - (long double)-2)
-			* ((long double)nb - 0) / (HEIGHT - (long double)0)
-			+ (long double)-2);
-	if (pos == 'y')
-		return (((long double)-2 - (long double)2)
-			* ((long double)nb - 0)
-			/ (WIDTH - (long double)0) + (long double)2);
-	return (0);
-}
+
 
 t_comp	vector_add(t_comp c1, t_comp c2)
 {
@@ -91,8 +80,10 @@ t_comp	comppower(t_comp z)
 }
 
 
-int	main(void)
+int	main(int argc, char **argv)
 {
+	if (argc != 2)
+		return (0);
 	void	*mlx_ptr;
 	void	*win_ptr;
 	int	x = 0;
@@ -106,7 +97,7 @@ int	main(void)
 	
 	void *imgsrc;
 	void *imgdst;
-	imgsrc = mlx_xpm_file_to_image(mlx_ptr, "lodge.xpm", &x, &y);
+	imgsrc = mlx_xpm_file_to_image(mlx_ptr, argv[1], &x, &y);
 	imgdst = mlx_new_image(mlx_ptr, x, y);
 	
 	t_va	val1;
@@ -120,10 +111,10 @@ int	main(void)
 {	
 	int z = 0;
 	int i = 0;
-	r1.x = map('x', x);
-	r1.y = map('y', y);
-	r2.x = map('x', o);
-	r2.y = map('y', l);
+	// r1.x = map('x', x);
+	// r1.y = map('y', y);
+	// r2.x = map('x', o);
+	// r2.y = map('y', l);
 	o = 0;
 	if (g > (sizeof (unsigned int))/2)
 		g *= 1.618;
@@ -139,25 +130,27 @@ int	main(void)
 				g -= o;
 			i = o * val1.size + l * (val1.bpp) / 8;
 			z = o * val2.size + l * (val2.bpp) / 8;
-			r2.x = map('x', i) / 2;
-			r2.y = map('y', z) / 2;
+			// r2.x = map('x', i) / 2;
+			// r2.y = map('y', z) / 2;
 			r2 = vector_add(comppower(r2), comppower(r1));
 			// if (l < val1.size/16)
 			// if ((r2.x*r2.y) > o || (r2.x * r2.y) > o)
 				// *(unsigned int *)(val2.data + z) = *(unsigned int *)(val1.data + i);
 			if (o > l)
-				*(unsigned int *)(val2.data + z) = *(unsigned int *)(val1.data + i)<<(15+g);
-			else if (o < l || l < (int)g)
+				*(unsigned int *)(val2.data + z) = *(unsigned int *)(val1.data + i)+(3*(g-(i*z))>>1);
+			else if ((o < l || l < (int)g))
 			{
 				if (g % 2 == 0)
 					*(unsigned int *)(val2.data + z) = *(unsigned int *)(val1.data + i)<<g--;
 				else
 					*(unsigned char *)(val2.data + z) = *(unsigned char *)(val1.data + i)>>(g++);
-
+				// o--;
+				// l = l + l ;
 			}
 			else
 				*(unsigned int *)(val2.data + z) = *(unsigned int *)(val1.data + i)>>g;
-
+			// if (o > l && g % 64)
+				// l /= 4;
 			// *(unsigned char *)(val2.data + z) = *(unsigned char *)(val1.data + i);
 				// *(unsigned int *)(val2.data + 10 * val2.size + 10 * (val2.bpp / 8)) = val2.bpp>>1;
 			// *(unsigned int *)(val2.data + z) = *(unsigned int *)(val1.data + i) * (r2.x+r2.y);
@@ -169,7 +162,8 @@ int	main(void)
 		o++;
 		if (o % 8 == 0)
 		{
-			mlx_put_image_to_window(mlx_ptr, win_ptr, imgdst, 0, 0);
+			
+			mlx_put_image_to_window(mlx_ptr, win_ptr, imgdst, 50, 50);
 			usleep(10000);
 		}
 	}
