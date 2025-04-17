@@ -7,7 +7,7 @@ RUN MAKE RE IN MLX_LINUX FOLDER
 RUN MAKE IN THE REPO FOLDER
 
 to launch the program: ./clv "file"
-
+to close ctrl+c in the terminal
 
 
 example:
